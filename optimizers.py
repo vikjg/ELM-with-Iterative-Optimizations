@@ -76,3 +76,4 @@ class optimizer():
         B = torch.pinverse(self.A)
         self.x = torch.matmul(B, self.f)
         return self.x
+

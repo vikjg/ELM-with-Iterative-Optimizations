@@ -7,11 +7,8 @@ from extreme_learning_machines import randomNet, classifierELM
 
 
 def to_onehot(batch_size, num_classes, y):
-    # One hot encoding buffer that you create out of the loop and just keep reusing
     y_onehot = torch.FloatTensor(batch_size, num_classes)
-    #y = y.type(dtype=torch.long)
     y = torch.unsqueeze(y, dim=1)
-    # In your for loop
     y_onehot.zero_()
     y_onehot.scatter_(1, y, 1)
 
@@ -21,8 +18,8 @@ def to_onehot(batch_size, num_classes, y):
 transform = transforms.Compose([transforms.ToTensor(),
                               transforms.Normalize((0.5,), (0.5,)),
                               ])
-trainset = datasets.MNIST('C:/Users/Vik/numerical_proj/.data', download=True, train=True, transform=transform)
-valset = datasets.MNIST('C:/Users/Vik/numerical_proj/.data', download=True, train=False, transform=transform)
+trainset = datasets.MNIST('C:/Users/vgiorda1/Python/ELM-with-Iterative-Optimizations/.data', download=True, train=True, transform=transform)
+valset = datasets.MNIST('C:/Users/vgiorda1/Python/ELM-with-Iterative-Optimizations/.data', download=True, train=False, transform=transform)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=len(trainset), shuffle=True)
 valloader = torch.utils.data.DataLoader(valset, batch_size=len(valset), shuffle=True)
 

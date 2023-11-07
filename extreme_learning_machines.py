@@ -1,14 +1,15 @@
+
 # =============================================================================
 # import sys
-# sys.path.append('C:/Users/Vik/numerical_proj')
+# sys.path.append('C:/Users/vgiorda1/Python/ELM-with-Iterative-Optimizations')
 # =============================================================================
 
 import torch
 import torch.nn as nn
-import torchvision
+#import torchvision
 import matplotlib.pyplot as plt
 from time import time
-from torchvision import datasets, transforms
+#from torchvision import datasets, transforms
 from optimizers import optimizer
 
 
@@ -55,18 +56,7 @@ class classifierELM():
     def fit(self, optimizer_func):
         hidden = self.model.forwardToHidden(self.train_data)
         opt = optimizer(self.model, hidden, self.target, 50)
-        if optimizer_func == 'pseudo_inv':    
-            beta = opt.pseudo_inv()
-        if optimizer_func == 'jacobi':
-            beta = opt.jacobi()
-        if optimizer_func == 'element_jacobi':
-            beta = opt.element_jacobi()
-        if optimizer_func == 'gaussSeidel':
-            beta = opt.gaussSeidel()
-        if optimizer_func == 'element_gaussSeidel':
-            beta = opt.element_gaussSeidel()
-        if optimizer_func == 'SOR':
-            beta = opt.SOR()
+        beta = optimizer_call(opt, optimizer_func)
         with torch.no_grad():
             self.model.layer2.weight = torch.nn.parameter.Parameter(beta.t())
         output = self.model.forward(self.train_data)
@@ -88,18 +78,7 @@ class regressionELM():
     def fit(self, optimizer_func):
         hidden = self.model.forwardToHidden(self.train_data)
         opt = optimizer(self.model, hidden, self.target, 50)
-        if optimizer_func == 'pseudo_inv':    
-            beta = opt.pseudo_inv()
-        if optimizer_func == 'jacobi':
-            beta = opt.jacobi()
-        if optimizer_func == 'element_jacobi':
-            beta = opt.element_jacobi()
-        if optimizer_func == 'gaussSeidel':
-            beta = opt.gaussSeidel()
-        if optimizer_func == 'element_gaussSeidel':
-            beta = opt.element_gaussSeidel()
-        if optimizer_func == 'SOR':
-            beta = opt.SOR()
+        beta = optimizer_call(opt, optimizer_func)
         with torch.no_grad():
             self.model.layer2.weight = torch.nn.parameter.Parameter(beta.t())
         output = self.model.forward(self.train_data)
@@ -109,7 +88,21 @@ class regressionELM():
         output = self.model.forward(self.test_data)
         return output
     
-
+# Helper Function
+def optimizer_call(optimizer, optimizer_func):
+    if optimizer_func == 'pseudo_inv':    
+        beta = optimizer.pseudo_inv()
+    if optimizer_func == 'jacobi':
+        beta = optimizer.jacobi()
+    if optimizer_func == 'element_jacobi':
+        beta = optimizer.element_jacobi()
+    if optimizer_func == 'gaussSeidel':
+        beta = optimizer.gaussSeidel()
+    if optimizer_func == 'element_gaussSeidel':
+        beta = optimizer.element_gaussSeidel()
+    if optimizer_func == 'SOR':
+        beta = optimizer.SOR()    
+    return beta
 
 
         
