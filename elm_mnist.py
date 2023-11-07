@@ -2,17 +2,8 @@ import torch
 import torchvision
 import matplotlib.pyplot as plt
 from torchvision import datasets, transforms
-from extreme_learning_machines import randomNet, classifierELM
+from extreme_learning_machines import randomNet, classifierELM, to_onehot
 
-
-
-def to_onehot(batch_size, num_classes, y):
-    y_onehot = torch.FloatTensor(batch_size, num_classes)
-    y = torch.unsqueeze(y, dim=1)
-    y_onehot.zero_()
-    y_onehot.scatter_(1, y, 1)
-
-    return y_onehot
 
 
 transform = transforms.Compose([transforms.ToTensor(),
@@ -46,5 +37,5 @@ test_labels = to_onehot(batch_size=len(test_labels), num_classes=10, y=test_labe
 
 model = randomNet(784, 500, 10, torch.nn.functional.sigmoid)
 elm = classifierELM(model, images.float(), labels.float(), test_images, test_labels)
-init = elm.fit('SOR')
+init = elm.fit('element_gaussSeidel')
 elm.classify()
