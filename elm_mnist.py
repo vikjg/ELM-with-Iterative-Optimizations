@@ -1,16 +1,24 @@
 import torch
-import torchvision
-import matplotlib.pyplot as plt
+#import torchvision
+#import matplotlib.pyplot as plt
 from torchvision import datasets, transforms
-from extreme_learning_machines import randomNet, classifierELM, to_onehot
+import tracemalloc
+from extreme_learning_machines import randomNet, classifierELM
 
+# One hot encoder for the MNIST targets
+def to_onehot(batch_size, num_classes, y):
+    y_onehot = torch.FloatTensor(batch_size, num_classes)
+    y = torch.unsqueeze(y, dim=1)
+    y_onehot.zero_()
+    y_onehot.scatter_(1, y, 1)
 
+    return y_onehot
 
 transform = transforms.Compose([transforms.ToTensor(),
                               transforms.Normalize((0.5,), (0.5,)),
                               ])
-trainset = datasets.MNIST('C:/Users/vgiorda1/Python/ELM-with-Iterative-Optimizations/.data', download=True, train=True, transform=transform)
-valset = datasets.MNIST('C:/Users/vgiorda1/Python/ELM-with-Iterative-Optimizations/.data', download=True, train=False, transform=transform)
+trainset = datasets.MNIST('C:/Users/Vik/ELM-with-Iterative-Optimizations/.data', download=True, train=True, transform=transform)
+valset = datasets.MNIST('C:/Users/Vik/ELM-with-Iterative-Optimizations/.data', download=True, train=False, transform=transform)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=len(trainset), shuffle=True)
 valloader = torch.utils.data.DataLoader(valset, batch_size=len(valset), shuffle=True)
 
@@ -34,8 +42,10 @@ test_labels = to_onehot(batch_size=len(test_labels), num_classes=10, y=test_labe
 #     plt.imshow(images[index].numpy().squeeze(), cmap='gray_r')
 # =============================================================================
 
-
+tracemalloc.start()
 model = randomNet(784, 500, 10, torch.nn.functional.sigmoid)
 elm = classifierELM(model, images.float(), labels.float(), test_images, test_labels)
-init = elm.fit('element_gaussSeidel')
+init = elm.fit('pseudo_inv')
 elm.classify()
+print('Current and Peak RAM Usage:', tracemalloc.get_traced_memory()[1]/1000000, 'MB')
+tracemalloc.stop()

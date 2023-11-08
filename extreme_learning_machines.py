@@ -7,8 +7,9 @@
 import torch
 import torch.nn as nn
 #import torchvision
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from time import time
+from math import sqrt
 #from torchvision import datasets, transforms
 from optimizers import optimizer
 
@@ -54,18 +55,24 @@ class classifierELM():
 
     
     def fit(self, optimizer_func):
+        init_time = time()
         hidden = self.model.forwardToHidden(self.train_data)
         opt = optimizer(self.model, hidden, self.target, 50)
         beta = optimizer_call(opt, optimizer_func)
         with torch.no_grad():
             self.model.layer2.weight = torch.nn.parameter.Parameter(beta.t())
         output = self.model.forward(self.train_data)
+        end_time = time()
+        print('Training time:', end_time - init_time)
         return output
     
     def classify(self):
+        init_time = time()
         output = self.model.forward(self.test_data)
+        end_time = time()
         correct = torch.sum(torch.argmax(output, dim=1) == torch.argmax(self.test_target, dim=1)).item()
         print(correct / len(self.test_data))
+        print('Test time:', end_time - init_time)
         
 
 class regressionELM(): 
@@ -76,18 +83,26 @@ class regressionELM():
         self.test_data = test_data
         self.test_target = test_target
         
+    
     def fit(self, optimizer_func):
+        init_time = time()
         hidden = self.model.forwardToHidden(self.train_data)
         opt = optimizer(self.model, hidden, self.target, 100)
         beta = optimizer_call(opt, optimizer_func)
         with torch.no_grad():
             self.model.layer2.weight = torch.nn.parameter.Parameter(beta.t())
         output = self.model.forward(self.train_data)
+        end_time = time()
+        print('Training time:', end_time - init_time)
         return output
         
     def classify(self):
+        init_time = time()
         output = self.model.forward(self.test_data)
-        return output
+        mse = nn.MSELoss()
+        end_time = time()
+        print('Test time:', end_time - init_time)
+        return sqrt(mse(output, self.test_target))
     
 # Helper Functions
 def optimizer_call(optimizer, optimizer_func):
@@ -106,12 +121,6 @@ def optimizer_call(optimizer, optimizer_func):
     
     return beta
 
-def to_onehot(batch_size, num_classes, y):
-    y_onehot = torch.FloatTensor(batch_size, num_classes)
-    y = torch.unsqueeze(y, dim=1)
-    y_onehot.zero_()
-    y_onehot.scatter_(1, y, 1)
 
-    return y_onehot
         
         
