@@ -10,3 +10,7 @@ A full analysis of training time, classification/regression accuracy, and RAM us
 Update 11/7/2023:
 Implementation of the BUPA and Iris datasets from UCI Machine Learning Repository. Now have examples of both the regressor and classifier working properly. 
 In the above mentioned datasets, I need to implement a shuffling of data and a breakdown of the dataset to seperate the training and test data. Next steps are still accuracy, timing, and efficiency.
+
+Update 11/8/2023:
+Implementation of Wine, Abalone, and Glass datasets. Proper batch manipulation with shuffling now included alongside time and RAM measurements. 
+Time for data visualization, runs with different parameters, and maybe some fun applications such as Statcast data.
