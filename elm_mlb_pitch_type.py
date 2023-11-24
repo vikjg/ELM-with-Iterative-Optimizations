@@ -6,15 +6,14 @@ import torch
 #from torchvision import datasets, transforms
 import tracemalloc
 from extreme_learning_machines import randomNet, classifierELM
-from ucimlrepo import fetch_ucirepo 
 from sklearn.preprocessing import OneHotEncoder
   
 # fetch dataset 
-iris = fetch_ucirepo(id=53) 
+mlb = pd.read_csv(r'C:\Users\vgiorda1\Python\ELM-with-Iterative-Optimizations\2023_mlb_statcast.csv')
   
 # data (as pandas dataframes) 
-X = iris.data.features 
-y = iris.data.targets 
+X = mlb[['release_speed', 'pfx_x', 'pfx_z', 'release_spin_rate', 'spin_axis']]
+y = mlb[['pitch_type']]
 
 enc = OneHotEncoder(handle_unknown='ignore')
 enc.fit(y)
@@ -29,16 +28,16 @@ trainloader = torch.utils.data.DataLoader(tensor_dataset, batch_size=len(tensor_
 valloader = torch.utils.data.DataLoader(tensor_dataset, batch_size=len(tensor_dataset)//3, shuffle=True)
 
 dataiter = iter(trainloader)
-markers, flower = next(dataiter)
+markers, pitch = next(dataiter)
 
 
 test_dataiter = iter(valloader)
-test_markers, test_flower = next(test_dataiter)
+test_markers, test_pitch = next(test_dataiter)
 
 tracemalloc.start()
-model = randomNet(markers.size()[1], 100, flower.size()[1], torch.nn.functional.sigmoid)
-elm = classifierELM(model, markers, flower, test_markers, test_flower)
+model = randomNet(markers.size()[1], 200, pitch.size()[1], torch.nn.functional.sigmoid)
+elm = classifierELM(model, markers, pitch, test_markers, test_pitch)
 init = elm.fit('element_gaussSeidel')
 elm.classify()
-print('Current and Peak RAM Usage:', tracemalloc.get_traced_memory()[1]/1000000, 'MB')
+print('Peak RAM Usage:', tracemalloc.get_traced_memory()[1]/1000000, 'MB')
 tracemalloc.stop()

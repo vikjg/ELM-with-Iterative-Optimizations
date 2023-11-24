@@ -57,7 +57,7 @@ class classifierELM():
     def fit(self, optimizer_func):
         init_time = time()
         hidden = self.model.forwardToHidden(self.train_data)
-        opt = optimizer(self.model, hidden, self.target, 50)
+        opt = optimizer(self.model, hidden, self.target, 200)
         beta = optimizer_call(opt, optimizer_func)
         with torch.no_grad():
             self.model.layer2.weight = torch.nn.parameter.Parameter(beta.t())
@@ -87,7 +87,7 @@ class regressionELM():
     def fit(self, optimizer_func):
         init_time = time()
         hidden = self.model.forwardToHidden(self.train_data)
-        opt = optimizer(self.model, hidden, self.target, 100)
+        opt = optimizer(self.model, hidden, self.target, 200)
         beta = optimizer_call(opt, optimizer_func)
         with torch.no_grad():
             self.model.layer2.weight = torch.nn.parameter.Parameter(beta.t())
