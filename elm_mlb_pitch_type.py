@@ -7,13 +7,20 @@ import torch
 import tracemalloc
 from extreme_learning_machines import randomNet, classifierELM
 from sklearn.preprocessing import OneHotEncoder
+import pybaseball
   
 # fetch dataset 
 mlb = pd.read_csv(r'C:\Users\vgiorda1\Python\ELM-with-Iterative-Optimizations\2023_mlb_statcast.csv')
-  
+kershaw = pybaseball.playerid_lookup('kershaw', 'clayton')['key_mlbam']
+mlb_pitch = mlb.loc[mlb['pitcher'] == kershaw.iloc[0]]  
+
 # data (as pandas dataframes) 
 X = mlb[['release_speed', 'pfx_x', 'pfx_z', 'release_spin_rate', 'spin_axis']]
 y = mlb[['pitch_type']]
+
+#X = mlb_pitch[['release_speed', 'pfx_x', 'pfx_z', 'release_spin_rate', 'spin_axis', 'vx0', 'vy0', 'vz0', 'ax', 'ay', 'az']]
+#y = mlb_pitch[['pitch_type']]
+
 
 enc = OneHotEncoder(handle_unknown='ignore')
 enc.fit(y)
@@ -35,7 +42,7 @@ test_dataiter = iter(valloader)
 test_markers, test_pitch = next(test_dataiter)
 
 tracemalloc.start()
-model = randomNet(markers.size()[1], 200, pitch.size()[1], torch.nn.functional.sigmoid)
+model = randomNet(markers.size()[1], 100, pitch.size()[1], torch.nn.functional.sigmoid)
 elm = classifierELM(model, markers, pitch, test_markers, test_pitch)
 init = elm.fit('element_gaussSeidel')
 elm.classify()
