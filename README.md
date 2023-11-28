@@ -16,4 +16,4 @@ Implementation of Wine, Abalone, and Glass datasets. Proper batch manipulation w
 Time for data visualization, runs with different parameters, and maybe some fun applications such as Statcast data.
 
 Update 11/27/2023:
-Been messing around with parameters and a couple MLB classifiers for both ball in play results and pitch classification. Pitch classification has a lot of work to be done to make it a feasible model (if even possible under ELM frame), but ball in play is shockingly accurate at 85% with training costs shockingly low (less than 1mb RAM usage and less than 0.5sec training time). 
+Been messing around with parameters and a couple MLB classifiers for both ball in play results and pitch classification. Pitch classification has a lot of work to be done to make it a feasible model (if even possible under ELM frame), but ball in play is shockingly accurate at 85% with training costs shockingly low (less than 1mb RAM usage and less than 0.5sec training time). Better performance than generic models such as those proposed by Tyler James Burch in his preliminary blog (https://tylerjamesburch.com/blog/baseball/hit-classifier-1). 
