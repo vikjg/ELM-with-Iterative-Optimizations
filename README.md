@@ -14,3 +14,6 @@ In the above mentioned datasets, I need to implement a shuffling of data and a b
 Update 11/8/2023:
 Implementation of Wine, Abalone, and Glass datasets. Proper batch manipulation with shuffling now included alongside time and RAM measurements. 
 Time for data visualization, runs with different parameters, and maybe some fun applications such as Statcast data.
+
+Update 11/27/2023:
+Been messing around with parameters and a couple MLB classifiers for both ball in play results and pitch classification. Pitch classification has a lot of work to be done to make it a feasible model (if even possible under ELM frame), but ball in play is shockingly accurate at 85% with training costs shockingly low (less than 1mb RAM usage and less than 0.5sec training time). 
