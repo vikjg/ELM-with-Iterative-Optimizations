@@ -43,7 +43,7 @@ test_markers, test_pitch = next(test_dataiter)
 
 tracemalloc.start()
 model = randomNet(markers.size()[1], 100, pitch.size()[1], torch.nn.functional.sigmoid)
-elm = classifierELM(model, markers, pitch, test_markers, test_pitch)
+elm = classifierELM(model, markers, pitch, test_markers, test_pitch, 50)
 init = elm.fit('element_gaussSeidel')
 elm.classify()
 print('Peak RAM Usage:', tracemalloc.get_traced_memory()[1]/1000000, 'MB')

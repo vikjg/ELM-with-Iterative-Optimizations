@@ -36,8 +36,8 @@ test_markers, test_drinks = next(test_dataiter)
 
 
 tracemalloc.start()
-model = randomNet(markers.size()[1], 500, 1, torch.nn.functional.sigmoid)
-elm = regressionELM(model, markers, drinks, test_markers, test_drinks)
+model = randomNet(markers.size()[1], 500, 1, torch.sin)
+elm = regressionELM(model, markers, drinks, test_markers, test_drinks, 50)
 init = elm.fit('pseudo_inv')
 test = elm.classify()
 print('RMSE:', test)

@@ -1,9 +1,4 @@
-
-# =============================================================================
-# import sys
-# sys.path.append('C:/Users/vgiorda1/Python/ELM-with-Iterative-Optimizations')
-# =============================================================================
-
+import tracemalloc
 import torch
 import torch.nn as nn
 #import torchvision
@@ -46,48 +41,53 @@ class randomNet(nn.Module):
        return x
 
 class classifierELM(): 
-    def __init__(self, model, train_data, target, test_data, test_target):
+    def __init__(self, model, train_data, target, test_data, test_target, max_iter, error):
         self.model = model
         self.train_data = train_data
         self.target = target
         self.test_data = test_data
         self.test_target = test_target
+        self.max_iter = max_iter
+        self.error = error
 
     
     def fit(self, optimizer_func):
         init_time = time()
         hidden = self.model.forwardToHidden(self.train_data)
-        opt = optimizer(self.model, hidden, self.target, 500)
+        opt = optimizer(self.model, hidden, self.target, self.max_iter, self.error)
         beta = optimizer_call(opt, optimizer_func)
         with torch.no_grad():
             self.model.layer2.weight = torch.nn.parameter.Parameter(beta.t())
         output = self.model.forward(self.train_data)
         end_time = time()
-        print('Training time:', end_time - init_time)
-        return output
+        train_t = end_time - init_time
+        return output, train_t
     
     def classify(self):
         init_time = time()
         output = self.model.forward(self.test_data)
         end_time = time()
         correct = torch.sum(torch.argmax(output, dim=1) == torch.argmax(self.test_target, dim=1)).item()
-        print(correct / len(self.test_data))
-        print('Test time:', end_time - init_time)
+        acc = correct / len(self.test_data)
+        test_t = end_time - init_time
+        return acc, test_t
         
 
 class regressionELM(): 
-    def __init__(self, model, train_data, target, test_data, test_target):
+    def __init__(self, model, train_data, target, test_data, test_target, max_iter, error):
         self.model = model
         self.train_data = train_data
         self.target = target
         self.test_data = test_data
         self.test_target = test_target
+        self.max_iter = max_iter
+        self.error = error
         
     
     def fit(self, optimizer_func):
         init_time = time()
         hidden = self.model.forwardToHidden(self.train_data)
-        opt = optimizer(self.model, hidden, self.target, 500)
+        opt = optimizer(self.model, hidden, self.target, self.max_iter, self.error)
         beta = optimizer_call(opt, optimizer_func)
         with torch.no_grad():
             self.model.layer2.weight = torch.nn.parameter.Parameter(beta.t())
@@ -118,7 +118,8 @@ def optimizer_call(optimizer, optimizer_func):
         beta = optimizer.element_gaussSeidel()
     if optimizer_func == 'SOR':
         beta = optimizer.SOR()    
-    
+    if optimizer_func == 'pinv':
+        beta = optimizer.pinv() 
     return beta
 
 
